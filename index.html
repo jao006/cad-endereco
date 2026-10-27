@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1120">
+  <title>Atlas | Gestão de Clientes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="brand-mark">A</span><span>atlas<span class="brand-sub">GESTÃO DE CLIENTES</span></span></a>
+      <div class="side-label">MENU PRINCIPAL</div>
+      <button class="nav-item active" data-view="dashboard"><span>▦</span> Visão geral</button>
+      <button class="nav-item" data-view="clients"><span>♙</span> Clientes <span class="nav-count" id="sideCount">0</span></button>
+      <button class="nav-item" data-view="register"><span>＋</span> Novo cadastro</button>
+      <div class="sidebar-bottom">
+        <div class="api-status"><span class="status-dot"></span><div><b>ViaCEP conectado</b><small>Consulta de endereços</small></div></div>
+        <div class="profile"><div class="avatar">AC</div><div><b>Área administrativa</b><small>Sistema de cadastro</small></div></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb">Workspace <span>/</span> <b id="crumb">Visão geral</b></div>
+        <div class="top-actions"><span class="live-pill"><span></span> Sistema online</span><div class="top-avatar">A</div></div>
+      </header>
+
+      <section class="view active" id="dashboardView">
+        <div class="page-heading">
+          <div><p class="eyebrow">PAINEL DE CONTROLE</p><h1>Visão geral<span class="heading-dot">.</span></h1><p class="subheading">Acompanhe seus clientes e mantenha os dados organizados.</p></div>
+          <div class="heading-actions"><button class="btn btn-light" id="seedDemoBtn">＋ Carregar 5 exemplos</button><button class="btn btn-primary" id="newClientBtn">＋ Novo cliente</button></div>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span>Total de clientes</span><span class="stat-icon green">♙</span></div><div class="stat-number" id="totalStat">0</div><div class="stat-foot">Registros no Firestore</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Pessoas físicas</span><span class="stat-icon blue">◎</span></div><div class="stat-number" id="pfStat">0</div><div class="stat-foot">Clientes individuais</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Pessoas jurídicas</span><span class="stat-icon violet">▤</span></div><div class="stat-number" id="pjStat">0</div><div class="stat-foot">Empresas e fornecedores</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Cidades atendidas</span><span class="stat-icon orange">⌖</span></div><div class="stat-number" id="cityStat">0</div><div class="stat-foot">Localidades cadastradas</div></article>
+        </div>
+        <section class="panel recent-panel">
+          <div class="panel-heading"><div><h2>Cadastros recentes</h2><p>Os últimos clientes adicionados ao sistema.</p></div><button class="btn btn-light" id="seeAllBtn">Ver todos <span>→</span></button></div>
+          <div class="table-wrap"><table><thead><tr><th>CLIENTE</th><th>TIPO</th><th>CONTATO</th><th>LOCALIZAÇÃO</th><th>AÇÕES</th></tr></thead><tbody id="recentRows"><tr><td colspan="5" class="empty">Carregando cadastros...</td></tr></tbody></table></div>
+        </section>
+        <div class="bottom-grid">
+          <section class="panel api-panel"><div class="api-illustration">⌖</div><div><p class="eyebrow">INTEGRAÇÃO EXTERNA</p><h2>Endereço sem digitação manual</h2><p>Digite um CEP e a ViaCEP busca automaticamente rua, bairro, cidade e estado.</p><a href="https://viacep.com.br/" target="_blank" rel="noreferrer">Conheça a ViaCEP ↗</a></div></section>
+          <section class="panel tip-panel"><div class="tip-icon">✦</div><div><h3>Seus dados, organizados.</h3><p>Cadastre, consulte, edite e exclua registros em um único lugar.</p><span class="tiny-tag">FIRESTORE + VIACEP</span></div></section>
+        </div>
+      </section>
+
+      <section class="view" id="clientsView">
+        <div class="page-heading"><div><p class="eyebrow">BASE DE DADOS</p><h1>Clientes<span class="heading-dot">.</span></h1><p class="subheading">Consulte e gerencie todos os registros cadastrados.</p></div><button class="btn btn-primary" id="clientsNewBtn">＋ Novo cliente</button></div>
+        <section class="panel directory-panel">
+          <div class="directory-tools"><div class="searchbox"><span>⌕</span><input id="searchInput" type="search" placeholder="Buscar por nome, documento, e-mail ou cidade..."></div><select id="typeFilter" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option><option value="Pessoa física">Pessoa física</option><option value="Pessoa jurídica">Pessoa jurídica</option></select><button class="btn btn-light" id="refreshBtn">↻ Atualizar</button></div>
+          <div class="table-wrap"><table><thead><tr><th>CLIENTE</th><th>TIPO</th><th>CONTATO</th><th>ENDEREÇO</th><th>AÇÕES</th></tr></thead><tbody id="clientRows"><tr><td colspan="5" class="empty">Carregando cadastros...</td></tr></tbody></table></div>
+          <div class="table-footer"><span id="resultCount">0 registros</span><span>Dados sincronizados com o Firestore</span></div>
+        </section>
+      </section>
+
+      <section class="view" id="registerView">
+        <div class="page-heading"><div><p class="eyebrow">GESTÃO DE CONTATOS</p><h1 id="formTitle">Novo cadastro<span class="heading-dot">.</span></h1><p class="subheading">Preencha os dados do cliente e consulte o endereço pelo CEP.</p></div><button class="btn btn-light" id="cancelFormTop">← Voltar</button></div>
+        <form id="clientForm" class="form-layout">
+          <input type="hidden" id="recordId">
+          <section class="panel form-panel">
+            <div class="form-section-title"><span class="section-number">01</span><div><h2>Informações do cliente</h2><p>Dados principais para identificação e contato.</p></div></div>
+            <div class="form-grid">
+              <label class="field full"><span>Nome completo / Razão social <i>*</i></span><input id="name" required maxlength="120" placeholder="Ex.: Mariana Oliveira"></label>
+              <label class="field"><span>Tipo de cadastro <i>*</i></span><select id="kind" required><option value="Pessoa física">Pessoa física</option><option value="Pessoa jurídica">Pessoa jurídica</option></select></label>
+              <label class="field"><span>CPF / CNPJ</span><input id="document" maxlength="20" placeholder="000.000.000-00"></label>
+              <label class="field"><span>E-mail</span><input id="email" type="email" maxlength="120" placeholder="nome@empresa.com.br"></label>
+              <label class="field"><span>Telefone</span><input id="phone" type="tel" maxlength="20" placeholder="(15) 99999-9999"></label>
+            </div>
+          </section>
+          <section class="panel form-panel">
+            <div class="form-section-title"><span class="section-number">02</span><div><h2>Endereço</h2><p>Use o CEP para preencher os dados automaticamente.</p></div></div>
+            <div class="cep-row"><label class="field"><span>CEP <i>*</i></span><input id="cep" required inputmode="numeric" maxlength="9" placeholder="00000-000"></label><button class="btn btn-secondary" type="button" id="lookupCep">⌕ Buscar CEP</button><span class="cep-feedback" id="cepFeedback">Consulta gratuita via ViaCEP</span></div>
+            <div class="form-grid address-grid">
+              <label class="field street-field"><span>Logradouro <i>*</i></span><input id="street" required maxlength="150" placeholder="Rua, avenida..."></label>
+              <label class="field"><span>Número</span><input id="number" maxlength="20" placeholder="Nº"></label>
+              <label class="field"><span>Complemento</span><input id="complement" maxlength="100" placeholder="Apto, sala..."></label>
+              <label class="field"><span>Bairro <i>*</i></span><input id="district" required maxlength="100" placeholder="Bairro"></label>
+              <label class="field"><span>Cidade <i>*</i></span><input id="city" required maxlength="100" placeholder="Cidade"></label>
+              <label class="field"><span>Estado (UF) <i>*</i></span><input id="state" required maxlength="2" placeholder="SP"></label>
+            </div>
+          </section>
+          <section class="panel form-panel">
+            <div class="form-section-title"><span class="section-number">03</span><div><h2>Observações</h2><p>Informações adicionais (opcional).</p></div></div>
+            <label class="field"><span>Observações internas</span><textarea id="notes" rows="3" maxlength="500" placeholder="Anotações sobre o cliente..."></textarea></label>
+          </section>
+          <div class="form-actions"><span><i>*</i> Campos obrigatórios</span><div><button class="btn btn-light" type="button" id="cancelForm">Cancelar</button><button class="btn btn-primary" type="submit" id="saveBtn">Salvar cadastro <span>→</span></button></div></div>
+        </form>
+      </section>
+      <footer class="footer"><span>© 2026 Atlas Gestão de Clientes</span><span>Desenvolvido com <b>Firebase</b> e <b>ViaCEP</b></span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <div class="modal-backdrop" id="confirmModal"><div class="confirm-box"><div class="confirm-icon">!</div><h2>Excluir cadastro?</h2><p>Esta ação removerá o registro do Firestore e não poderá ser desfeita.</p><div class="confirm-actions"><button class="btn btn-light" id="keepRecord">Cancelar</button><button class="btn btn-danger" id="confirmDelete">Excluir cliente</button></div></div></div>
+</body>
+</html>

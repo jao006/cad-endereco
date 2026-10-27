@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // REGRA TEMPORÁRIA PARA A DEMONSTRAÇÃO ESCOLAR.
+    // Libera apenas a coleção clientes, sem login, até 30/11/2026.
+    // Não use em produção nem armazene dados reais/sensíveis.
+    match /clientes/{clienteId} {
+      allow read, write: if request.time < timestamp.date(2026, 11, 30);
+    }
+  }
+}
